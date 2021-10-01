@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, Text, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform } from 'react-native';
 
 import { Input } from '../../components/Input';
 import { Header } from '../../components/Header';
@@ -32,53 +32,58 @@ export function Plan() {
   }
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} testID="keyboard">
-      <View style={styles.container}>
-        <Header />
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{flex: 1}}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} testID="keyboard">
+        <View style={styles.container}>
+          <Header />
 
-        <PlanInfo
-          name={plan.name}
-          value={plan.value}
-        />
-
-        <View style={styles.options}>
-          <Option
-            title="Premium"
-            active={plan.name === 'Premium'}
-            onPress={() => handleChangePlan('premium')}
-            testID="option-premium"
+          <PlanInfo
+            name={plan.name}
+            value={plan.value}
           />
-          <Option
-            title="Basic"
-            active={plan.name === 'Basic'}
-            onPress={() => handleChangePlan('basic')}
+
+          <View style={styles.options}>
+            <Option
+              title="Premium"
+              active={plan.name === 'Premium'}
+              onPress={() => handleChangePlan('premium')}
+              testID="option-premium"
+            />
+            <Option
+              title="Basic"
+              active={plan.name === 'Basic'}
+              onPress={() => handleChangePlan('basic')}
+            />
+          </View>
+
+          <Input
+            placeholder="your email"
+            testID="input-email"
           />
-        </View>
 
-        <Input
-          placeholder="your email"
-          testID="input-email"
-        />
+          {
+            emailSent &&
+            <Text style={styles.confirmation} testID="confirmation-message">
+              We send you a  {'\n'}
+              confirmation email.
+            </Text>
+          }
 
-        {
-          emailSent &&
-          <Text style={styles.confirmation} testID="confirmation-message">
-            We send you a  {'\n'}
-            confirmation email.
+          <Button
+            title="Subscribe"
+            onPress={handleSubscribe}
+            testID="button-subscribe"
+          />
+
+          <Text style={styles.details} testID="plan-note">
+            If the price changes, we'll notify you beforehand.
+            You cam check your renewal date or cancel anytime via your Account page.
           </Text>
-        }
-
-        <Button
-          title="Subscribe"
-          onPress={handleSubscribe}
-          testID="button-subscribe"
-        />
-
-        <Text style={styles.details} testID="plan-note">
-          If the price changes, we'll notify you beforehand.
-          You cam check your renewal date or cancel anytime via your Account page.
-        </Text>
-      </View>
-    </TouchableWithoutFeedback>
+        </View>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
